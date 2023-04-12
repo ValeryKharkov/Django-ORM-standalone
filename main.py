@@ -42,3 +42,7 @@ if __name__ == '__main__':
     print('-' * 10, 'Шаг 8', '-' * 10)
     visits_list = Visit.objects.all()
     print(visits_list)
+
+    print('-' * 10, 'Шаг 9', '-' * 10)
+    not_leaved_visit = Visit.objects.filter(leaved_at=None)
+    print(not_leaved_visit)
