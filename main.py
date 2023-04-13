@@ -2,6 +2,10 @@ import os
 
 import django
 
+import datetime
+
+from django.utils.timezone import localtime as moscow_time
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 django.setup()
 
@@ -9,6 +13,7 @@ from datacenter.models import Passcard  # noqa: E402
 from datacenter.models import Visit
 
 if __name__ == '__main__':
+
     # Программируем здесь
     print('-' * 10, 'Шаг 1', '-' * 10)
     print('Количество пропусков:', Passcard.objects.count())  # noqa: T001
@@ -46,3 +51,16 @@ if __name__ == '__main__':
     print('-' * 10, 'Шаг 9', '-' * 10)
     not_leaved_visit = Visit.objects.filter(leaved_at=None)
     print(not_leaved_visit)
+
+    print('-' * 10, 'Шаг 10', '-' * 10)
+
+    passcards = Passcard.objects.all()  # Определение последовательности со всеми пасскартами
+
+    for employee in passcards:  # Выявление каждого сотрудника
+        timer = datetime.timedelta()  # Определение таймера, начало отсчета
+        visit_employee = Visit.objects.filter(passcard=employee)  # Фильтрация всех визитов по ФИО сотрудника
+
+        for visit in visit_employee:  # Выявление каждого визита сотрудника
+            delta = visit.leaved_at - visit.entered_at  # Определение время нахождения сотрудника за один визит
+            timer += delta  # Суммирование время нахождения сотрудника в хранилище
+
