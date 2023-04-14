@@ -2,9 +2,7 @@ import os
 
 import django
 
-import datetime
-
-from django.utils.timezone import localtime as moscow_time
+from django.utils import timezone
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 django.setup()
@@ -51,16 +49,35 @@ if __name__ == '__main__':
     print('-' * 10, 'Шаг 9', '-' * 10)
     not_leaved_visit = Visit.objects.filter(leaved_at=None)
     print(not_leaved_visit)
+    """
+    print('-' * 10, 'Шаг 10', '-' * 10)  # Как я понял условия задачи, вариант №1
 
-    print('-' * 10, 'Шаг 10', '-' * 10)
-
-    passcards = Passcard.objects.all()  # Определение последовательности со всеми пасскартами
-
-    for employee in passcards:  # Выявление каждого сотрудника
+    for employee in active_passcards:  # Выявление каждого сотрудника с активной пасскартой
         timer = datetime.timedelta()  # Определение таймера, начало отсчета
         visit_employee = Visit.objects.filter(passcard=employee)  # Фильтрация всех визитов по ФИО сотрудника
 
         for visit in visit_employee:  # Выявление каждого визита сотрудника
-            delta = visit.leaved_at - visit.entered_at  # Определение время нахождения сотрудника за один визит
-            timer += delta  # Суммирование время нахождения сотрудника в хранилище
+            if visit.leaved_at is not None:  # Убрать из расчета визиты тех сотрудников, которые ещё находятся в хранилище
+                delta = visit.leaved_at - visit.entered_at  # Определение время нахождения сотрудника за один визит
+                timer += delta  # Суммирование время нахождения сотрудника в хранилище
+
+            print(f'{employee} находился в хранилище\n'
+                  f'с:  {moscow_time(visit.entered_at)}\n'
+                  f'по: {moscow_time(visit.leaved_at)}\n'
+                  f'Таймер визита: {delta}\n')
+
+        print(f'{employee} суммарно был в хранилище {timer}\n')
+
+    """
+    print('-' * 10, 'Шаг 10', '-' * 10)  # Как я понял условия задачи, вариант №2
+
+    for visit in not_leaved_visit:  # Выявление каждого визита сотрудника
+        now = timezone.now()
+        mos_time = timezone.localtime(visit.entered_at)
+        delta = now - mos_time
+        print(delta)
+
+        print(f'{visit.passcard} зашёл в хранилище (по московскому времени): {mos_time}\n'
+              f'Находится в хранилище: {delta}')
+
 
