@@ -70,8 +70,7 @@ if __name__ == '__main__':
 
     """
     print('-' * 10, 'Шаг 10', '-' * 10)  # Как я понял условия задачи, вариант №2
-
-    for visit in not_leaved_visit:  # Выявление каждого визита сотрудника
+    for visit in not_leaved_visit:  # Определение визита сотрудника, при котором сотрудник находится в хранилище
         now = timezone.now()
         mos_time = timezone.localtime(visit.entered_at)
         delta = now - mos_time
@@ -80,4 +79,7 @@ if __name__ == '__main__':
         print(f'{visit.passcard} зашёл в хранилище (по московскому времени): {mos_time}\n'
               f'Находится в хранилище: {delta}')
 
+    print('-' * 10, 'Шаг 11', '-' * 10)
+    for visit in not_leaved_visit:  # Определение визита сотрудника, при котором сотрудник находится в хранилище
+        print(visit.passcard)
 
